@@ -1,13 +1,13 @@
 {
   "name": "cef-gdal",
   "version": "1.0.0",
-  "description": "",
+  "description": "a cef Plugin for reading/writing Spatial data files (base on gdal library and node.js binding)",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC",
+  "license": "UNLICENSED",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/mbenzekri/cef-gdal.git"
@@ -15,5 +15,13 @@
   "dependencies": {
     "ceflib": "github:mbenzekri/ceflib",
     "gdal": "^0.9.8"
+  },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-config-standard": "^12.0.0",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-node": "^9.0.1",
+    "eslint-plugin-promise": "^4.1.1",
+    "eslint-plugin-standard": "^4.0.0"
   }
 }

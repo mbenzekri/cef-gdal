@@ -1,61 +1,62 @@
 import cef from 'ceflib'
+import gdal from 'gdal'
 
-declaration = new cef.Declaration ({
-    gitid : 'ShapefileReader@mbenzekri/gdal',
+const declaration = new cef.Declaration({
+    gitid: 'ShapefileReader@mbenzekri/gdal',
     title: 'ESRI Shapefile reader',
-    desc: 'read and output features from a ESRI Shapefile file (.shp)',
+    desc: 'read and output features from ESRI Shapefile files (.shp)',
     inputs: {
-        'files' : {
-            desc: 'file features having a <filename> attribute',
-        },
+        'files': {
+            desc: 'file features having a <filename> attribute'
+        }
     },
     outputs: {
-        'features' : {
-            desc: 'output features read from the files provided in inputs',
-        },
+        'features': {
+            desc: 'output features read from the files provided in inputs'
+        }
     },
     parameters: {
-        'filename': { 
+        'filename': {
             desc: 'attribute name of the  file name (full path, name and extension)',
-            type : 'string'
+            type: 'string'
         },
-        'coordsys': { 
+        'coordsys': {
             desc: 'the coordinate system of the geometries',
-            type : 'string'
+            type: 'string'
         },
-        'encoding': { 
+        'encoding': {
             desc: 'encoding of the shapefile text data',
-            type : 'string'
+            type: 'string'
         },
-        'filtered': { 
+        'filtered': {
             desc: 'checked (true) if bounding box filtering is needed',
-            type : 'boolean'
+            type: 'boolean'
         },
-        'x1bbox': { 
+        'x1bbox': {
             desc: 'x low/high coordinate of the bounding box',
-            type : 'number'
+            type: 'number'
         },
-        'y1bbox': { 
+        'y1bbox': {
             desc: 'y low/high coordinate of the bounding box',
-            type : 'number'
+            type: 'number'
         },
-        'x2bbox': { 
+        'x2bbox': {
             desc: 'x low/high coordinate of the bounding box',
-            type : 'number'
+            type: 'number'
         },
-        'y2bbox': { 
+        'y2bbox': {
             desc: 'y low/high coordinate of the bounding box',
-            type : 'number'
-        },
+            type: 'number'
+        }
     },
-    fields : [
+    fields: [
         {
             key: 'filename',
             type: 'text',
             templateOptions: {
                 label: 'Filename attribute',
                 required: true,
-                pattern: /[_A-Za-z]\w*/,
+                pattern: /[_A-Za-z]\w*/
             }
         },
         {
@@ -68,9 +69,9 @@ declaration = new cef.Declaration ({
                 options: [
                     { label: 'WGS 84', value: 'EPSG:4326' },
                     { label: 'web mercator', value: 'EPSG:3857' },
-                    { label: 'Lambert', value: 'EPSG:2154' },
-                ],
-            },
+                    { label: 'Lambert', value: 'EPSG:2154' }
+                ]
+            }
         },
         {
             key: 'encoding',
@@ -82,9 +83,9 @@ declaration = new cef.Declaration ({
                 options: [
                     { label: 'ISO-8859–1', value: 'ISO-8859–1' },
                     { label: 'UTF-8', value: 'UTF-8' },
-                    { label: 'cp1253', value: 'cp1253' },
-                ],
-            },
+                    { label: 'cp1253', value: 'cp1253' }
+                ]
+            }
         },
         {
             key: 'filtered',
@@ -94,63 +95,60 @@ declaration = new cef.Declaration ({
                 label: 'bbox filtering needed'
             },
             expressionProperties: {
-                'templateOptions.disabled': 'formState.awesomeIsForced',
-            },
+                'templateOptions.disabled': 'formState.awesomeIsForced'
+            }
         },
         {
             key: 'x1bbox',
             type: 'number',
             hideExpression: '!model.filtered',
             templateOptions: {
-                label: 'X1 bbox',
-            },
+                label: 'X1 bbox'
+            }
         },
         {
             key: 'y1bbox',
             type: 'number',
             hideExpression: '!model.filtered',
             templateOptions: {
-                label: 'Y1 bbox',
-            },
+                label: 'Y1 bbox'
+            }
         },
         {
             key: 'x2bbox',
             type: 'number',
             hideExpression: '!model.filtered',
             templateOptions: {
-                label: 'X2 bbox',
-            },
+                label: 'X2 bbox'
+            }
         },
         {
             key: 'y2bbox',
             type: 'number',
             hideExpression: '!model.filtered',
             templateOptions: {
-                label: 'Y2 bbox',
-            },
-        },
-    ],
-});
+                label: 'Y2 bbox'
+            }
+        }
+    ]
+})
 
 class ShapefileReader extends cef.Step {
-    constructor() {
-        super(def_opts)
-    }
-    input_files(feature) {
+    input_files (feature) {
         const filename = feature[this.param('filename')]
-        var dataset = gdal.open(filename);
-        var layer = dataset.layers.get(0);
+        var dataset = gdal.open(filename)
+        var layer = dataset.layers.get(0)
         var features = layer.features
         features.forEach(f => {
             const feature = {
-                type : 'Feature',
-                properties : f.fields.toObject(),
-                geometry : f.getGeometry().toObject(),
+                type: 'Feature',
+                properties: f.fields.toObject(),
+                geometry: f.getGeometry().toObject()
             }
-            this.output('features',feature)
+            this.output('features', feature)
         })
-        this.close('features');
+        this.close('features')
     }
 }
 
-export { declaration, ShapefileReader };
+export { declaration, ShapefileReader }
