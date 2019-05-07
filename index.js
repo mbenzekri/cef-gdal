@@ -1,8 +1,3 @@
-import { declaration as ShapefileReaderDecl, ShapefileReader as ShapefileReaderDef } from './src/ShapefileReader'
-import { declaration as ShapefileWriterDecl, ShapefileWriter as ShapefileWriterDef } from './src/ShapefileWriter'
-export { 
-    ShapefileReaderDecl,
-    ShapefileReaderDef,
-    ShapefileWriterDecl,
-    ShapefileWriterDef,
-}
+import { create as ShapefileReader } from './src/ShapefileReader'
+import { create as ShapefileWriter } from './src/ShapefileWriter'
+export { ShapefileReader, ShapefileWriter }

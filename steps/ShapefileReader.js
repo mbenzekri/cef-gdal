@@ -134,11 +134,16 @@ const declaration = new cef.Declaration({
 })
 
 class ShapefileReader extends cef.Step {
+    constructor (params, batch) {
+        super(new cef.Declaration(declaration), params, batch)
+    }
+    start () {
+        this.open('features')
+    }
     input_files (feature) {
         const filename = feature[this.param('filename')]
-        var dataset = gdal.open(filename)
-        var layer = dataset.layers.get(0)
-        var features = layer.features
+        let dataset = gdal.open(filename)
+        let features = dataset.layers.get(0).features
         features.forEach(f => {
             const feature = {
                 type: 'Feature',
@@ -147,8 +152,13 @@ class ShapefileReader extends cef.Step {
             }
             this.output('features', feature)
         })
+        dataset.close()
+        features = null
+        dataset = null
+    }
+    end () {
         this.close('features')
     }
 }
 
-export { declaration, ShapefileReader }
+export function create (params, batch) { return new ShapefileReader(params, batch) };

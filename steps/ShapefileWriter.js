@@ -29,6 +29,9 @@ const declaration = new cef.Declaration({
 })
 
 class ShapefileWriter extends cef.Step {
+    constructor (params, batch) {
+        super(new cef.Declaration(declaration), params, batch)
+    }
     input_files (feature) {
         const filename = feature[this.param('filename')]
         var dataset = gdal.open(filename)
@@ -40,4 +43,4 @@ class ShapefileWriter extends cef.Step {
     }
 }
 
-export { declaration, ShapefileWriter }
+export function create (params, batch) { return new ShapefileWriter(params, batch) };
