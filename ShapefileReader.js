@@ -1,6 +1,7 @@
-import cef from 'ceflib'
-import gdal from 'gdal'
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const cef = require("ceflib/step");
+const gdal = require("gdal");
 const declaration = new cef.Declaration({
     gitid: 'ShapefileReader@mbenzekri/gdal',
     title: 'ESRI Shapefile reader',
@@ -131,34 +132,34 @@ const declaration = new cef.Declaration({
             }
         }
     ]
-})
-
+});
 class ShapefileReader extends cef.Step {
-    constructor (params, batch) {
-        super(new cef.Declaration(declaration), params, batch)
+    constructor(params, batch) {
+        super(declaration, params, batch);
     }
-    start () {
-        this.open('features')
+    start() {
+        this.open('features');
     }
-    input_files (feature) {
-        const filename = feature[this.param('filename')]
-        let dataset = gdal.open(filename)
-        let features = dataset.layers.get(0).features
+    input_files(feature) {
+        let dataset = gdal.open(this.params.filename);
+        let features = dataset.layers.get(0).features;
         features.forEach(f => {
             const feature = {
                 type: 'Feature',
                 properties: f.fields.toObject(),
                 geometry: f.getGeometry().toObject()
-            }
-            this.output('features', feature)
-        })
-        dataset.close()
-        features = null
-        dataset = null
+            };
+            this.output('features', feature);
+        });
+        dataset.close();
+        features = null;
+        dataset = null;
     }
-    end () {
-        this.close('features')
+    end() {
+        this.close('features');
     }
 }
-
-export function create (params, batch) { return new ShapefileReader(params, batch) };
+function create(params, batch) { return new ShapefileReader(params, batch); }
+exports.create = create;
+;
+//# sourceMappingURL=ShapefileReader.js.map

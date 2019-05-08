@@ -1,6 +1,7 @@
-import cef from 'ceflib'
-import gdal from 'gdal'
-
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const cef = require("cef-lib/step");
+const gdal_1 = require("gdal");
 const declaration = new cef.Declaration({
     gitid: 'ShapefileWriter@mbenzekri/gdal',
     title: 'ESRI Shapefile writer',
@@ -10,6 +11,7 @@ const declaration = new cef.Declaration({
             desc: 'features to write in the <filename> shapefile'
         }
     },
+    outputs: {},
     parameters: {
         'filename': {
             desc: 'shapefile name to write',
@@ -26,21 +28,26 @@ const declaration = new cef.Declaration({
             }
         }
     ]
-})
-
+});
 class ShapefileWriter extends cef.Step {
-    constructor (params, batch) {
-        super(new cef.Declaration(declaration), params, batch)
+    constructor(params, batch) {
+        super(new cef.Declaration(declaration), params, batch);
     }
-    input_files (feature) {
-        const filename = feature[this.param('filename')]
-        var dataset = gdal.open(filename)
-        var layer = dataset.layers.get(0)
-        var features = layer.features
+    input_files(feature) {
+        const filename = feature[this.params.filename];
+        var dataset = gdal_1.default.open(filename);
+        var layer = dataset.layers.get(0);
+        var features = layer.features;
         // write the feature
-        features.forEach(f => )
-        this.close('features')
+        // features.forEach(f => )
+        this.close('features');
+    }
+    start() {
+    }
+    end() {
     }
 }
-
-export function create (params, batch) { return new ShapefileWriter(params, batch) };
+function create(params, batch) { return new ShapefileWriter(params, batch); }
+exports.create = create;
+;
+//# sourceMappingURL=ShapefileWriter.js.map
