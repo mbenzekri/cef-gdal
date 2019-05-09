@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 /* eslint-disable no-template-curly-in-string */
 const cef = require("cef-lib/step");
-process.env.CEF_PATH = `${__dirname}/steps`;
+process.env.CEF_PATH = __dirname;
 const flowchart = {
     name: 'Testing DirectoryWalker ',
     title: 'Testing DirectoryWalker',
