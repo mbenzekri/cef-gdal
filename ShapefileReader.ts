@@ -1,7 +1,7 @@
 import * as cef from 'cef-lib/step'
 import * as gdal from 'gdal'
 
-const declaration = new cef.Declaration({
+export const declaration: cef.Declaration = {
     gitid: 'ShapefileReader@mbenzekri/gdal',
     title: 'ESRI Shapefile reader',
     desc: 'read and output features from ESRI Shapefile files (.shp)',
@@ -131,24 +131,21 @@ const declaration = new cef.Declaration({
             }
         }
     ]
-})
+}
 
 class ShapefileReader extends cef.Step {
-    constructor(params: cef.ParamsMap, batch: cef.Batch) {
-        super(declaration, params, batch)
+    constructor(params: cef.ParamsMap) {
+        super(declaration, params)
     }
     start() {
         this.open('features')
     }
-    input_files(feature) {
+    input_files(feature: any) {
             let dataset = gdal.open(this.params.filename)
             let features = dataset.layers.get(0).features
             features.forEach(f => {
-                const feature = {
-                    type: 'Feature',
-                    properties: f.fields.toObject(),
-                    geometry: f.getGeometry().toObject()
-                }
+                const feature = f.fields.toObject();
+                feature.geometry = f.getGeometry().toObject()
                 this.output('features', feature)
             })
             dataset.close()
@@ -160,4 +157,4 @@ class ShapefileReader extends cef.Step {
     }
 }
 
-export function create(params: cef.ParamsMap, batch: cef.Batch) { return new ShapefileReader(params, batch) };
+export function create(params: cef.ParamsMap) { return new ShapefileReader(params) };

@@ -1,7 +1,7 @@
 import * as cef from 'cef-lib/step'
 import gdal from 'gdal'
 
-const declaration = new cef.Declaration({
+const declaration: cef.Declaration = {
     gitid: 'ShapefileWriter@mbenzekri/gdal',
     title: 'ESRI Shapefile writer',
     desc: 'write and output features to a ESRI Shapefile file (.shp)',
@@ -28,11 +28,11 @@ const declaration = new cef.Declaration({
             }
         }
     ]
-})
+}
 
 class ShapefileWriter extends cef.Step {
-    constructor (params, batch) {
-        super(new cef.Declaration(declaration), params, batch)
+    constructor (params:cef.ParamsMap) {
+        super(declaration, params)
     }
     input_files (feature) {
         const filename = feature[this.params.filename]
@@ -51,4 +51,4 @@ class ShapefileWriter extends cef.Step {
     }
 }
 
-export function create (params, batch) { return new ShapefileWriter(params, batch) };
+export function create (params: cef.ParamsMap) { return new ShapefileWriter(params) };

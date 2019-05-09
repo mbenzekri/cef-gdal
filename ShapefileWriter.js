@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const cef = require("cef-lib/step");
 const gdal_1 = require("gdal");
-const declaration = new cef.Declaration({
+const declaration = {
     gitid: 'ShapefileWriter@mbenzekri/gdal',
     title: 'ESRI Shapefile writer',
     desc: 'write and output features to a ESRI Shapefile file (.shp)',
@@ -28,10 +28,10 @@ const declaration = new cef.Declaration({
             }
         }
     ]
-});
+};
 class ShapefileWriter extends cef.Step {
-    constructor(params, batch) {
-        super(new cef.Declaration(declaration), params, batch);
+    constructor(params) {
+        super(declaration, params);
     }
     input_files(feature) {
         const filename = feature[this.params.filename];
@@ -47,7 +47,7 @@ class ShapefileWriter extends cef.Step {
     end() {
     }
 }
-function create(params, batch) { return new ShapefileWriter(params, batch); }
+function create(params) { return new ShapefileWriter(params); }
 exports.create = create;
 ;
 //# sourceMappingURL=ShapefileWriter.js.map

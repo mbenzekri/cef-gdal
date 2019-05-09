@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const cef = require("ceflib/step");
+const cef = require("cef-lib/step");
 const gdal = require("gdal");
-const declaration = new cef.Declaration({
+exports.declaration = {
     gitid: 'ShapefileReader@mbenzekri/gdal',
     title: 'ESRI Shapefile reader',
     desc: 'read and output features from ESRI Shapefile files (.shp)',
@@ -132,10 +132,10 @@ const declaration = new cef.Declaration({
             }
         }
     ]
-});
+};
 class ShapefileReader extends cef.Step {
-    constructor(params, batch) {
-        super(declaration, params, batch);
+    constructor(params) {
+        super(exports.declaration, params);
     }
     start() {
         this.open('features');
@@ -144,11 +144,8 @@ class ShapefileReader extends cef.Step {
         let dataset = gdal.open(this.params.filename);
         let features = dataset.layers.get(0).features;
         features.forEach(f => {
-            const feature = {
-                type: 'Feature',
-                properties: f.fields.toObject(),
-                geometry: f.getGeometry().toObject()
-            };
+            const feature = f.fields.toObject();
+            feature.geometry = f.getGeometry().toObject();
             this.output('features', feature);
         });
         dataset.close();
@@ -159,7 +156,7 @@ class ShapefileReader extends cef.Step {
         this.close('features');
     }
 }
-function create(params, batch) { return new ShapefileReader(params, batch); }
+function create(params) { return new ShapefileReader(params); }
 exports.create = create;
 ;
 //# sourceMappingURL=ShapefileReader.js.map

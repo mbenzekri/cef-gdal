@@ -13,6 +13,7 @@
     "url": "git+https://github.com/mbenzekri/cef-gdal.git"
   },
   "dependencies": {
+    "cef-fs": "github:mbenzekri/cef-fs",
     "cef-lib": "github:mbenzekri/cef-lib",
     "gdal": "^0.9.8"
   },
