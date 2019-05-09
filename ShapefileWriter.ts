@@ -2,7 +2,7 @@ import * as cef from 'cef-lib/step'
 import gdal from 'gdal'
 
 const declaration: cef.Declaration = {
-    gitid: 'ShapefileWriter@mbenzekri/gdal',
+    gitid: 'mbenzekri/cef-gdal/steps/ShapefileWriter',
     title: 'ESRI Shapefile writer',
     desc: 'write and output features to a ESRI Shapefile file (.shp)',
     inputs: {

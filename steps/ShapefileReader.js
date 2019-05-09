@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const cef = require("cef-lib/step");
 const gdal = require("gdal");
 exports.declaration = {
-    gitid: 'ShapefileReader@mbenzekri/gdal',
+    gitid: 'mbenzekri/cef-gdal/steps/ShapefileReader',
     title: 'ESRI Shapefile reader',
     desc: 'read and output features from ESRI Shapefile files (.shp)',
     inputs: {
