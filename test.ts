@@ -1,5 +1,6 @@
 /* eslint-disable no-template-curly-in-string */
 import * as cef from 'cef-lib/step'
+process.env['CEF_PATH'] = __dirname+'/../..'
 
 const flowchart: cef.Flowchart = {
     name: 'Testing DirectoryWalker ',
@@ -13,7 +14,7 @@ const flowchart: cef.Flowchart = {
             id: 'a',
             gitid: 'mbenzekri/cef-fs/steps/DirectoryWalker',
             params: {
-                directory: '${globals.PATH}/geofla',
+                directory: '${globals.PATH}/WORLD',
                 pattern: '.*',
                 extension: 'SHP|shp',
             },

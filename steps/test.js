@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 /* eslint-disable no-template-curly-in-string */
 const cef = require("cef-lib/step");
+process.env['CEF_PATH'] = __dirname + '/../..';
 const flowchart = {
     name: 'Testing DirectoryWalker ',
     title: 'Testing DirectoryWalker',
@@ -14,7 +15,7 @@ const flowchart = {
             id: 'a',
             gitid: 'mbenzekri/cef-fs/steps/DirectoryWalker',
             params: {
-                directory: '${globals.PATH}/geofla',
+                directory: '${globals.PATH}/WORLD',
                 pattern: '.*',
                 extension: 'SHP|shp',
             },
