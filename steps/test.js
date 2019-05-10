@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 /* eslint-disable no-template-curly-in-string */
 const cef = require("cef-lib/step");
-process.env.CEF_PATH = __dirname;
 const flowchart = {
     name: 'Testing DirectoryWalker ',
     title: 'Testing DirectoryWalker',
@@ -22,7 +21,7 @@ const flowchart = {
         },
         {
             id: 'b',
-            gitid: './ShapefileReader',
+            gitid: 'mbenzekri/cef-gdal/steps/ShapefileReader',
             params: {
                 filename: '${feature.filename}',
                 coordsys: 'EPSG:2154',
