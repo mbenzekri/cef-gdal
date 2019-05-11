@@ -4,7 +4,6 @@
     "description": "a cef Plugin for reading/writing Spatial data files (base on gdal library and node.js binding)",
     "main": "index.js",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
         "start": "node ./steps/test.js"
     },
     "author": "",

@@ -7,16 +7,13 @@ const flowchart: cef.Flowchart = {
     title: 'Testing DirectoryWalker',
     args: {},
     globals: {
-        PATH : { value: 'D:/data', type: 'string', desc: 'the data root dir' }
     },
     steps: [
         {
             id: 'a',
-            gitid: 'mbenzekri/cef-fs/steps/DirectoryWalker',
+            gitid: 'mbenzekri/cef-lib/steps/POJOProducer',
             params: {
-                directory: '${globals.PATH}/WORLD',
-                pattern: '.*',
-                extension: 'SHP|shp',
+                literal: `{ filename: "${ __dirname.replace(/\\/g,'') }/../data/iles.shp" }`,
             },
         },
         {
@@ -24,7 +21,7 @@ const flowchart: cef.Flowchart = {
             gitid: 'mbenzekri/cef-gdal/steps/ShapefileReader',
             params: {
                 filename: '${feature.filename}',
-                coordsys: 'EPSG:2154',
+                coordsys: 'EPSG:4326',
                 encoding: 'utf-8',
                 filtered: 'false',
                 x1bbox: '0',
@@ -35,18 +32,15 @@ const flowchart: cef.Flowchart = {
         },
         {
             id: 'c',
-            gitid: 'mbenzekri/cef-fs/steps/FileLogger',
+            gitid: 'mbenzekri/cef-lib/steps/POJOLogger',
             params: {
-                filename: '${globals.PATH}/cef/shplogger.log',
-                append: 'false',
-                createdir: 'true',
-                message: '${JSON.stringify(feature)}',
+                expression: '${JSON.stringify(feature)}',
             },
         },
     ],
     pipes: [
-        { from: 'a', outport:'files', to: 'b', inport: 'files' },
-        { from: 'b', outport:'features', to: 'c', inport: 'features' },
+        { from: 'a', outport:'pojo', to: 'b', inport: 'files' },
+        { from: 'b', outport:'features', to: 'c', inport: 'pojos' },
     ]
 }
 
