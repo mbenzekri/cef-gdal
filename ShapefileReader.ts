@@ -140,17 +140,26 @@ class ShapefileReader extends cef.Step {
     start() {
         this.open('features')
     }
-    input_files(feature: any) {
-            let dataset = gdal.open(this.params.filename)
-            let features = dataset.layers.get(0).features
+    input_files(_feature: any) {
+        let dataset,features
+        try {
+            dataset = gdal.open(this.params.filename)
+        } catch(e) {
+            this.log(`Error while opening shapefile ${this.params.filename} due to error ${e.message}`)
+            return
+        }
+        try {
+            dataset = gdal.open(this.params.filename)
+            features = dataset.layers.get(0).features
             features.forEach(f => {
                 const feature = f.fields.toObject();
                 feature.geometry = f.getGeometry().toObject()
                 this.output('features', feature)
             })
-            dataset.close()
-            features = null
-            dataset = null
+        } catch(e) {
+            this.log(`Error reading shapefile ${this.params.filename} due to error ${e.message}`)
+        }
+        if (dataset) dataset.close()
     }
     end() {
         this.close('features')

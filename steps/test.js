@@ -7,13 +7,15 @@ const flowchart = {
     name: 'Testing DirectoryWalker ',
     title: 'Testing DirectoryWalker',
     args: {},
-    globals: {},
+    globals: {
+        ROOT: { value: `${__dirname.replace(/\\/g, '')}/..`, desc: 'the root data path', type: 'string' },
+    },
     steps: [
         {
             id: 'a',
             gitid: 'mbenzekri/cef-lib/steps/POJOProducer',
             params: {
-                literal: `{ filename: "${__dirname.replace(/\\/g, '')}/../data/iles.shp" }`,
+                json: '{ "filename": "${globals.ROOT}/data/iles.shp" }',
             },
         },
         {
