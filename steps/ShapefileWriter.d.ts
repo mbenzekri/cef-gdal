@@ -1,9 +1,7 @@
-import * as cef from 'cef-lib/step';
+import * as cef from 'cef-lib';
 declare class ShapefileWriter extends cef.Step {
     constructor(params: cef.ParamsMap);
-    input_files(feature: any): void;
-    start(): void;
-    end(): void;
+    doit(): Promise<void>;
 }
 export declare function create(params: cef.ParamsMap): ShapefileWriter;
 export {};

@@ -1,4 +1,4 @@
-import * as cef from 'cef-lib/step'
+import * as cef from 'cef-lib'
 import * as gdal from 'gdal'
 
 export const declaration: cef.Declaration = {
@@ -7,12 +7,12 @@ export const declaration: cef.Declaration = {
     desc: 'read and output features from ESRI Shapefile files (.shp)',
     inputs: {
         'files': {
-            desc: 'file features having a <filename> attribute'
+            desc: 'pojo having a <filename> attribute'
         }
     },
     outputs: {
-        'features': {
-            desc: 'output features read from the files provided in inputs'
+        'pojos': {
+            desc: 'output features read from the files provided in inputs (attributes pojo with an added "geometry" attibute)'
         }
     },
     parameters: {
@@ -137,32 +137,24 @@ class ShapefileReader extends cef.Step {
     constructor(params: cef.ParamsMap) {
         super(declaration, params)
     }
-    start() {
-        this.open('features')
-    }
-    input_files(_feature: any) {
-        let dataset,features
-        try {
-            dataset = gdal.open(this.params.filename)
-        } catch(e) {
-            this.log(`Error while opening shapefile ${this.params.filename} due to error ${e.message}`)
-            return
+    async doit() {
+        let dataset;
+        let pojo = await this.input('files')
+        while (pojo !== cef.EOF) {
+            try {
+                dataset = gdal.open(this.params.filename)
+                const features = dataset.layers.get(0).features
+                features.forEach(async f => {
+                    const pojo = f.fields.toObject();
+                    pojo.geometry = f.getGeometry().toObject()
+                    await this.output('pojos', pojo)
+                })
+                dataset.close()
+            } catch (e) {
+                this.log(`Error reading shapefile ${this.params.filename} due to error ${e.message}`)
+            }
+            pojo = await this.input('files')
         }
-        try {
-            dataset = gdal.open(this.params.filename)
-            features = dataset.layers.get(0).features
-            features.forEach(f => {
-                const feature = f.fields.toObject();
-                feature.geometry = f.getGeometry().toObject()
-                this.output('features', feature)
-            })
-        } catch(e) {
-            this.log(`Error reading shapefile ${this.params.filename} due to error ${e.message}`)
-        }
-        if (dataset) dataset.close()
-    }
-    end() {
-        this.close('features')
     }
 }
 

@@ -1,6 +1,14 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const cef = require("cef-lib/step");
+const cef = require("cef-lib");
 const gdal = require("gdal");
 exports.declaration = {
     gitid: 'mbenzekri/cef-gdal/steps/ShapefileReader',
@@ -8,12 +16,12 @@ exports.declaration = {
     desc: 'read and output features from ESRI Shapefile files (.shp)',
     inputs: {
         'files': {
-            desc: 'file features having a <filename> attribute'
+            desc: 'pojo having a <filename> attribute'
         }
     },
     outputs: {
-        'features': {
-            desc: 'output features read from the files provided in inputs'
+        'pojos': {
+            desc: 'output features read from the files provided in inputs (attributes pojo with an added "geometry" attibute)'
         }
     },
     parameters: {
@@ -137,35 +145,27 @@ class ShapefileReader extends cef.Step {
     constructor(params) {
         super(exports.declaration, params);
     }
-    start() {
-        this.open('features');
-    }
-    input_files(_feature) {
-        let dataset, features;
-        try {
-            dataset = gdal.open(this.params.filename);
-        }
-        catch (e) {
-            this.log(`Error while opening shapefile ${this.params.filename} due to error ${e.message}`);
-            return;
-        }
-        try {
-            dataset = gdal.open(this.params.filename);
-            features = dataset.layers.get(0).features;
-            features.forEach(f => {
-                const feature = f.fields.toObject();
-                feature.geometry = f.getGeometry().toObject();
-                this.output('features', feature);
-            });
-        }
-        catch (e) {
-            this.log(`Error reading shapefile ${this.params.filename} due to error ${e.message}`);
-        }
-        if (dataset)
-            dataset.close();
-    }
-    end() {
-        this.close('features');
+    doit() {
+        return __awaiter(this, void 0, void 0, function* () {
+            let dataset;
+            let pojo = yield this.input('files');
+            while (pojo !== cef.EOF) {
+                try {
+                    dataset = gdal.open(this.params.filename);
+                    const features = dataset.layers.get(0).features;
+                    features.forEach((f) => __awaiter(this, void 0, void 0, function* () {
+                        const pojo = f.fields.toObject();
+                        pojo.geometry = f.getGeometry().toObject();
+                        yield this.output('pojos', pojo);
+                    }));
+                    dataset.close();
+                }
+                catch (e) {
+                    this.log(`Error reading shapefile ${this.params.filename} due to error ${e.message}`);
+                }
+                pojo = yield this.input('files');
+            }
+        });
     }
 }
 function create(params) { return new ShapefileReader(params); }
