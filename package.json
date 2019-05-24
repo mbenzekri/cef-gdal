@@ -1,24 +1,39 @@
 {
-    "name": "cef-gdal",
+    "name": "pojoe-gdal",
     "version": "1.0.0",
-    "description": "a cef Plugin for reading/writing Spatial data files (base on gdal library and node.js binding)",
-    "main": "index.js",
-    "scripts": {
-        "start": "node ./steps/test.js"
+    "title": "spatial data steps",
+    "description": "this module provides Pojoes steps for spatial data readers/writers (based on gdal library)",
+    "main": "./steps/tests.js",
+    "config": {
+        "steps": [
+            "ShapefileReader",
+            "ShapefileWriter"
+        ]
     },
-    "author": "",
-    "license": "UNLICENSED",
+    "scripts": {
+        "build": "tsc",
+        "predoc": "tsc",
+        "doc": "node ./node_modules/pojoe/steps/docgen.js",
+        "pretest": "npm run doc",
+        "test": "node ./steps/test.js"
+    },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/mbenzekri/cef-gdal.git"
+        "url": "git+https://github.com/mbenzekri/pojoe-gdal.git"
     },
+    "author": "Mohamed Ben Zekri",
+    "license": "UNLICENSED",
+    "bugs": {
+        "url": "https://github.com/mbenzekri/pojoe-gdal/issues"
+    },
+    "homepage": "https://github.com/mbenzekri/pojoe-gdal#readme",
     "dependencies": {
         "gdal": "^0.9.8"
     },
-    "peerDependencies": {
-        "cef-lib": "github:mbenzekri/cef-lib"
-    },
     "devDependencies": {
         "@types/node": "^12.0.1"
+    },
+    "peerDependencies": {
+        "pojoe": "github:mbenzekri/pojoe"
     }
 }

@@ -1,161 +1,86 @@
-import * as cef from 'cef-lib'
+import { Step, Declaration, ParamsMap } from 'pojoe/steps'
 import * as gdal from 'gdal'
 
-export const declaration: cef.Declaration = {
-    gitid: 'mbenzekri/cef-gdal/steps/ShapefileReader',
+export const declaration: Declaration = {
+    gitid: 'mbenzekri/pojoe-gdal/steps/ShapefileReader',
     title: 'ESRI Shapefile reader',
-    desc: 'read and output features from ESRI Shapefile files (.shp)',
+    desc: 'read and output pojos (features) from ESRI Shapefilez (./dbf + .shp)',
     inputs: {
         'files': {
-            desc: 'pojo having a <filename> attribute'
+            title: 'a pojo with enough data to produce a <filename>',
+            desc: 'this pojo must provide enough data for the step to construct a <filename> (see. filename attribute)'
         }
     },
     outputs: {
         'pojos': {
+            title: 'output pojos (features) read from the shapefiles provided',
             desc: 'output features read from the files provided in inputs (attributes pojo with an added "geometry" attibute)'
         }
     },
     parameters: {
         'filename': {
-            desc: 'attribute name of the  file name (full path, name and extension)',
-            type: 'string'
+            title : 'provides the shapefile name',
+            desc:   'use this property to provide a full path name of the shapefile to read (.dbf file must be in same directory) \n' +
+                    'this may be constructed dynamicaly using pojo "files"',
+            type: 'string',
+            default: '/tmp/shapefile.shp',
+            examples: []
+        },
+        'geometry': {
+            title: 'property name for the geometry',
+            desc: 'property name for the geometry',
+            type: 'string',
+            default: 'geometry',
         },
         'coordsys': {
-            desc: 'the coordinate system of the geometries',
-            type: 'string'
+            title: 'the coordinate system of the geometries (in "EPSG:####" form)',
+            type: 'string',
+            default: 'EPSG:4326',
         },
-        'encoding': {
-            desc: 'encoding of the shapefile text data',
-            type: 'string'
-        },
+        // 'encoding': {
+        //     title: 'encoding of the shapefile text data',
+        //     type: 'string',
+        //     default: 'utf8',
+        //     enum: []
+        // },
         'filtered': {
-            desc: 'checked (true) if bounding box filtering is needed',
-            type: 'boolean'
+            title: 'checked (true) if bounding box filtering is needed',
+            type: 'boolean',
+            default: 'false'
         },
-        'x1bbox': {
-            desc: 'x low/high coordinate of the bounding box',
-            type: 'number'
-        },
-        'y1bbox': {
-            desc: 'y low/high coordinate of the bounding box',
-            type: 'number'
-        },
-        'x2bbox': {
-            desc: 'x low/high coordinate of the bounding box',
-            type: 'number'
-        },
-        'y2bbox': {
-            desc: 'y low/high coordinate of the bounding box',
-            type: 'number'
+        'bbox': {
+            title: 'filter bounding box (comma separated coordinates xbottom,ybottom,xtop,ytop)',
+            type: 'number[]',
+            default: '-180,-90,180,90'
         }
-    },
-    fields: [
-        {
-            key: 'filename',
-            type: 'text',
-            templateOptions: {
-                label: 'Filename attribute',
-                required: true,
-                pattern: /[_A-Za-z]\w*/
-            }
-        },
-        {
-            key: 'coordsys',
-            type: 'select',
-            defaultValue: 'EPSG:4326',
-            templateOptions: {
-                label: 'Coordinate System',
-                required: true,
-                options: [
-                    { label: 'WGS 84', value: 'EPSG:4326' },
-                    { label: 'web mercator', value: 'EPSG:3857' },
-                    { label: 'Lambert', value: 'EPSG:2154' }
-                ]
-            }
-        },
-        {
-            key: 'encoding',
-            type: 'select',
-            defaultValue: 'UTF-8',
-            templateOptions: {
-                label: 'File encoding',
-                required: true,
-                options: [
-                    { label: 'ISO-8859–1', value: 'ISO-8859–1' },
-                    { label: 'UTF-8', value: 'UTF-8' },
-                    { label: 'cp1253', value: 'cp1253' }
-                ]
-            }
-        },
-        {
-            key: 'filtered',
-            type: 'checkbox',
-            defaultValue: false,
-            templateOptions: {
-                label: 'bbox filtering needed'
-            },
-            expressionProperties: {
-                'templateOptions.disabled': 'formState.awesomeIsForced'
-            }
-        },
-        {
-            key: 'x1bbox',
-            type: 'number',
-            hideExpression: '!model.filtered',
-            templateOptions: {
-                label: 'X1 bbox'
-            }
-        },
-        {
-            key: 'y1bbox',
-            type: 'number',
-            hideExpression: '!model.filtered',
-            templateOptions: {
-                label: 'Y1 bbox'
-            }
-        },
-        {
-            key: 'x2bbox',
-            type: 'number',
-            hideExpression: '!model.filtered',
-            templateOptions: {
-                label: 'X2 bbox'
-            }
-        },
-        {
-            key: 'y2bbox',
-            type: 'number',
-            hideExpression: '!model.filtered',
-            templateOptions: {
-                label: 'Y2 bbox'
-            }
-        }
-    ]
+    }
 }
 
-class ShapefileReader extends cef.Step {
-    constructor(params: cef.ParamsMap) {
+class ShapefileReader extends Step {
+    static readonly declaration = declaration
+    constructor(params: ParamsMap) {
         super(declaration, params)
     }
-    async doit() {
+    async input(inport: string, pjo: any) {
         let dataset;
-        let pojo = await this.input('files')
-        while (pojo !== cef.EOF) {
-            try {
-                dataset = gdal.open(this.params.filename)
-                const features = dataset.layers.get(0).features
-                features.forEach(async f => {
-                    const pojo = f.fields.toObject();
-                    pojo.geometry = f.getGeometry().toObject()
-                    await this.output('pojos', pojo)
-                })
-                dataset.close()
-            } catch (e) {
-                this.log(`Error reading shapefile ${this.params.filename} due to error ${e.message}`)
-            }
-            pojo = await this.input('files')
+        try {
+            dataset = gdal.open(this.params.filename)
+        } catch (e) {
+            dataset.close()
+            this.error(`error opening shapefile ${this.params.filename} due to error ==> \n    ${e.message}`)
+        }
+        try {
+            const features = dataset.layers.get(0).features
+            features.forEach(async f => {
+                const pojo = f.fields.toObject();
+                pojo.geometry = f.getGeometry().toObject()
+                await this.output('pojos', pojo)
+            })
+        } catch (e) {
+            dataset.close()
+            this.error(`Error reading shapefile ${this.params.filename} due to error ==> \n    ${e.message}`)
         }
     }
 }
 
-export function create(params: cef.ParamsMap) { return new ShapefileReader(params) };
+Step.register(ShapefileReader)

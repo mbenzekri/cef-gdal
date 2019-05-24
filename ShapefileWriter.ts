@@ -1,52 +1,46 @@
-import * as cef from 'cef-lib'
+import { Declaration, Step, ParamsMap} from 'pojoe/steps'
 import gdal from 'gdal'
 
-const declaration: cef.Declaration = {
-    gitid: 'mbenzekri/cef-gdal/steps/ShapefileWriter',
+const declaration: Declaration = {
+    gitid: 'mbenzekri/pojoe-gdal/steps/ShapefileWriter',
     title: 'ESRI Shapefile writer',
     desc: 'write inputed pojos to an ESRI Shapefile file (.shp)',
     inputs: {
         'pojos': {
-            desc: 'features to write in the <filename> shapefile'
+            title: 'features to write in the <filename> shapefile'
         }
     },
     outputs: {
     },
     parameters: {
         'filename': {
-            desc: 'shapefile name to write',
-            type: 'string'
+            title: 'shapefile name to write',
+            type: 'string',
+            default: '/tmp/sample.shp'
         },
         'geometry': {
-            desc: 'geometry property in inputed pojos',
-            type: 'string'
+            title: 'geometry property in inputed pojos',
+            type: 'string',
+            default: 'geometry',
         }
-    },
-    fields: [
-        {
-            key: 'filename',
-            type: 'text',
-            templateOptions: {
-                label: 'Filename',
-                required: true
-            }
-        }
-    ]
+    }
 }
 
-class ShapefileWriter extends cef.Step {
-    constructor (params:cef.ParamsMap) {
+class ShapefileWriter extends Step {
+    static readonly declaration = declaration
+    constructor (params:ParamsMap) {
         super(declaration, params)
     }
-    async doit () {
-        const pojo = await this.input('files')
-        const filename = pojo[this.params.filename]
-        var dataset = gdal.open(filename)
-        var layer = dataset.layers.get(0)
-        var features = layer.features
+    async process () {
+        this.error('NOT IMPLEMENTED !!!')
+        // const pojo = await this.input('files')
+        // const filename = pojo[this.params.filename]
+        // var dataset = gdal.open(filename)
+        // var layer = dataset.layers.get(0)
+        // var features = layer.features
         // write the feature
         // features.forEach(f => )
     }
 }
 
-export function create (params: cef.ParamsMap) { return new ShapefileWriter(params) };
+Step.register(ShapefileWriter)

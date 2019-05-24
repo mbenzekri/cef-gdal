@@ -1,57 +1,89 @@
 /* eslint-disable no-template-curly-in-string */
-import * as cef from 'cef-lib'
+import { Testcase, Testbed } from 'pojoe/steps'
+import './ShapefileReader'
+import './ShapefileWriter'
 
-const flowchart: cef.Flowchart = {
-    name: 'Testing ShapefileReader ',
-    title: 'Testing ShapefileReader',
-    args: {},
-    globals: {
-        ROOT : { value: `${__dirname.replace(/\\/g,'') }/..`, desc:'the root data path', type:'string' },
+const tests: Testcase[] = [
+    {
+        stepid: 'mbenzekri/pojoe-gdal/steps/ShapefileReader',
+        title: 'simple point layer reading ',
+        params: {
+            filename: '${pojo.shapefile}',
+            geometry: 'geom',
+            coordsys: 'EPSG:4326',
+            filtered: 'false',
+            bbox: '-180,-90,180,90',
+        },
+        injected: {
+            files: [
+                { shapefile: __dirname + '/../data/sample.shp' }
+            ]
+        },
+        expected: {
+            'pojos': [
+                {
+                    "id": 1,
+                    "text": "PARIS",
+                    "integer": 1,
+                    "float": 0.123,
+                    "date": {
+                        "year": 2019,
+                        "month": 5,
+                        "day": 24
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            2.337956373762412,
+                            48.85681156805855
+                        ]
+                    }
+                },
+                {
+                    "id": 2,
+                    "text": "LONDRES",
+                    "integer": 2,
+                    "float": 0.125,
+                    "date": {
+                        "year": 2019,
+                        "month": 5,
+                        "day": 24
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            -0.136469262670197,
+                            51.50203438464012
+                        ]
+                    }
+                },
+                {
+                    "id": 3,
+                    "text": "MADRID",
+                    "integer": 3,
+                    "float": 0.124,
+                    "date": {
+                        "year": 2019,
+                        "month": 5,
+                        "day": 24
+                    },
+                    "geometry": {
+                        "type": "Point",
+                        "coordinates": [
+                            -3.661174120889405,
+                            40.411848991825785
+                        ]
+                    }
+                }
+            ]
+        }
     },
-    steps: [
-        {
-            id: 'a1',
-            gitid: 'mbenzekri/cef-js/steps/POJOProducer',
-            params: {
-                json: '{ "filename": "${globals.ROOT}/data/iles.shp" }',
-            },
-        },
-        {
-            id: 'a2',
-            gitid: 'mbenzekri/cef-js/steps/POJOProducer',
-            params: {
-                json: '{ "filename": "${globals.ROOT}/data/ne_110m_populated_places_simple.shp" }',
-            },
-        },
-        {
-            id: 'b',
-            gitid: 'mbenzekri/cef-gdal/steps/ShapefileReader',
-            params: {
-                filename: '${pojo.filename}',
-                coordsys: 'EPSG:4326',
-                encoding: 'utf-8',
-                filtered: 'false',
-                x1bbox: '0',
-                y1bbox: '0',
-                x2bbox: '0',
-                y2bbox: '0',
-            },
-        },
-        {
-            id: 'c',
-            gitid: 'mbenzekri/cef-js/steps/POJOLogger',
-            params: {
-                expression: '${JSON.stringify(pojo)}',
-            },
-        },
-    ],
-    pipes: [
-        { from: 'a1', outport:'pojo', to: 'b', inport: 'files' },
-        { from: 'a2', outport:'pojo', to: 'b', inport: 'files' },
-        { from: 'b', outport:'pojos', to: 'c', inport: 'pojos' },
-    ]
-}
+]
 
-const batch = new cef.Batch(flowchart)
 
-batch.run();
+Testbed.run(tests).then(() =>
+    console.log('TEST TERMINATED')
+).catch(() =>
+    console.log('TEST TERMINATED')
+)
+

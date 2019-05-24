@@ -8,56 +8,47 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const cef = require("cef-lib");
-const gdal_1 = require("gdal");
+const steps_1 = require("pojoe/steps");
 const declaration = {
-    gitid: 'mbenzekri/cef-gdal/steps/ShapefileWriter',
+    gitid: 'mbenzekri/pojoe-gdal/steps/ShapefileWriter',
     title: 'ESRI Shapefile writer',
     desc: 'write inputed pojos to an ESRI Shapefile file (.shp)',
     inputs: {
         'pojos': {
-            desc: 'features to write in the <filename> shapefile'
+            title: 'features to write in the <filename> shapefile'
         }
     },
     outputs: {},
     parameters: {
         'filename': {
-            desc: 'shapefile name to write',
-            type: 'string'
+            title: 'shapefile name to write',
+            type: 'string',
+            default: '/tmp/sample.shp'
         },
         'geometry': {
-            desc: 'geometry property in inputed pojos',
-            type: 'string'
+            title: 'geometry property in inputed pojos',
+            type: 'string',
+            default: 'geometry',
         }
-    },
-    fields: [
-        {
-            key: 'filename',
-            type: 'text',
-            templateOptions: {
-                label: 'Filename',
-                required: true
-            }
-        }
-    ]
+    }
 };
-class ShapefileWriter extends cef.Step {
+class ShapefileWriter extends steps_1.Step {
     constructor(params) {
         super(declaration, params);
     }
-    doit() {
+    process() {
         return __awaiter(this, void 0, void 0, function* () {
-            const pojo = yield this.input('files');
-            const filename = pojo[this.params.filename];
-            var dataset = gdal_1.default.open(filename);
-            var layer = dataset.layers.get(0);
-            var features = layer.features;
+            this.error('NOT IMPLEMENTED !!!');
+            // const pojo = await this.input('files')
+            // const filename = pojo[this.params.filename]
+            // var dataset = gdal.open(filename)
+            // var layer = dataset.layers.get(0)
+            // var features = layer.features
             // write the feature
             // features.forEach(f => )
         });
     }
 }
-function create(params) { return new ShapefileWriter(params); }
-exports.create = create;
-;
+ShapefileWriter.declaration = declaration;
+steps_1.Step.register(ShapefileWriter);
 //# sourceMappingURL=ShapefileWriter.js.map
