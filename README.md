@@ -19,8 +19,6 @@
 ## parameters
 > **filename** *{string}* -- provides the shapefile name  -- default = `/tmp/shapefile.shp`
 > 
->| Value | Description | 
->|-------|-------------| 
 > **geometry** *{string}* -- property name for the geometry  -- default = `geometry`
 > 
 > **coordsys** *{string}* -- the coordinate system of the geometries (in "EPSG:####" form)  -- default = `EPSG:4326`

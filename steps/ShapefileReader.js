@@ -33,7 +33,6 @@ exports.declaration = {
                 'this may be constructed dynamicaly using pojo "files"',
             type: 'string',
             default: '/tmp/shapefile.shp',
-            examples: []
         },
         'geometry': {
             title: 'property name for the geometry',
